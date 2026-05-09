@@ -5,7 +5,7 @@ const repoRoot = __dirname;
 const targetArg = process.argv[2];
 
 if (!targetArg) {
-  console.log('Usage: node file-access.js <relative-file-path>');
+  console.log('Usage: node file-access.js <path-inside-repository>');
   console.log('Example: node file-access.js 01-variables-data-types/script.js');
   process.exit(1);
 }
@@ -18,12 +18,13 @@ if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
   process.exit(1);
 }
 
-if (!fs.existsSync(targetPath)) {
+let stat;
+try {
+  stat = fs.statSync(targetPath);
+} catch {
   console.error('Error: Path does not exist.');
   process.exit(1);
 }
-
-const stat = fs.statSync(targetPath);
 
 if (stat.isDirectory()) {
   const items = fs.readdirSync(targetPath);
