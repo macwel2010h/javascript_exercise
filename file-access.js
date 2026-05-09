@@ -31,11 +31,24 @@ try {
 }
 
 if (stat.isDirectory()) {
-  const items = fs.readdirSync(targetPath);
+  let items;
+  try {
+    items = fs.readdirSync(targetPath);
+  } catch {
+    console.error('Error: Unable to read directory.');
+    process.exit(1);
+  }
   console.log(`Directory: ${targetArg}`);
   items.forEach((item) => console.log(item));
   process.exit(0);
 }
 
-const content = fs.readFileSync(targetPath, 'utf8');
+let content;
+try {
+  content = fs.readFileSync(targetPath, 'utf8');
+} catch {
+  console.error('Error: Unable to read file.');
+  process.exit(1);
+}
+
 console.log(content);
