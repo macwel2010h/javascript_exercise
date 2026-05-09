@@ -1,0 +1,54 @@
+const fs = require('fs');
+const path = require('path');
+
+const repoRoot = __dirname;
+const targetArg = process.argv[2];
+
+if (!targetArg) {
+  console.log('Usage: node file-access.js <path-inside-repository>');
+  console.log('Example: node file-access.js 01-variables-data-types/script.js');
+  process.exit(1);
+}
+
+const targetPath = path.resolve(repoRoot, targetArg);
+const relativePath = path.relative(repoRoot, targetPath);
+
+if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+  console.error('Error: Path must stay inside this repository.');
+  process.exit(1);
+}
+
+let stat;
+try {
+  stat = fs.statSync(targetPath);
+} catch (error) {
+  if (error && error.code === 'ENOENT') {
+    console.error('Error: Path does not exist.');
+  } else {
+    console.error('Error: Unable to access path.');
+  }
+  process.exit(1);
+}
+
+if (stat.isDirectory()) {
+  let items;
+  try {
+    items = fs.readdirSync(targetPath);
+  } catch {
+    console.error('Error: Unable to read directory.');
+    process.exit(1);
+  }
+  console.log(`Directory: ${targetArg}`);
+  items.forEach((item) => console.log(item));
+  process.exit(0);
+}
+
+let content;
+try {
+  content = fs.readFileSync(targetPath, 'utf8');
+} catch {
+  console.error('Error: Unable to read file.');
+  process.exit(1);
+}
+
+console.log(content);
