@@ -11,14 +11,15 @@ if (!targetArg) {
 }
 
 const targetPath = path.resolve(repoRoot, targetArg);
+const relativePath = path.relative(repoRoot, targetPath);
 
-if (!targetPath.startsWith(repoRoot + path.sep)) {
+if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
   console.error('Error: Path must stay inside this repository.');
   process.exit(1);
 }
 
 if (!fs.existsSync(targetPath)) {
-  console.error('Error: File does not exist.');
+  console.error('Error: Path does not exist.');
   process.exit(1);
 }
 
