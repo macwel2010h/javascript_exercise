@@ -21,8 +21,12 @@ if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
 let stat;
 try {
   stat = fs.statSync(targetPath);
-} catch {
-  console.error('Error: Path does not exist.');
+} catch (error) {
+  if (error && error.code === 'ENOENT') {
+    console.error('Error: Path does not exist.');
+  } else {
+    console.error('Error: Unable to access path.');
+  }
   process.exit(1);
 }
 

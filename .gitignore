@@ -14,7 +14,8 @@ pnpm-debug.log*
 
 # Environment files
 .env
-.env.*
+.env.local
+.env.*.local
 
 # Build/output
 dist/
